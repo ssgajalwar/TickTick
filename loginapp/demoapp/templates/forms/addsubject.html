@@ -1,0 +1,23 @@
+<!-- demoapp/templates/admin_registration.html -->
+
+{% extends 'forms/base.html' %}
+
+{% block content %}
+<div class="vh100 bg-theme">
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+      <div>
+        <h2 class="text-white text-center">Add Course</h2>
+        <form method="post" action="{% url 'demoapp:addsubject'%}">
+            {% csrf_token %}
+            {{form}}
+            <input class="bg-theme mt-3 text-white" type="submit" value="Submit">
+        </form>
+      </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+

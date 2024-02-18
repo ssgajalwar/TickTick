@@ -1,0 +1,25 @@
+{% extends 'registration/login.html' %}
+<!-- demoapp/templates/admin_login.html -->
+
+
+{% block content %}
+<div class="vh100 bg-theme">
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+      <div>
+        <h2 class="text-white text-center">Login as Admin</h2>
+        <form method="post" action="{% url 'demoapp:admin_login' %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Login</button>
+          <p>Dont have a account <a href="{% url 'demoapp:admin_registration'%}">Register as Admin</a></p>
+      
+        </form>
+      </div>
+  </div>
+</div>
+
+
+<style>
+
+</style>
+{% endblock %}

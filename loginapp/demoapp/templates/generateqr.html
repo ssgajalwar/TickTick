@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- <link rel="stylesheet" href="./style.css"> -->
+<div class="homepage bg-theme">
+    <div class="container h-100 d-flex justify-content-center align-items-center flex-column">
+        <h1 class="text-center text-light">Welcome To AMS</h1>
+        <div id="qrcode"></div>
+    </div>
+</div>
+
+<style>
+    .homepage{
+        height: 100vh;
+   
+    }
+    .bg-theme{
+    background: #8E2DE2;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .btn{
+        border-radius: 25px;
+        font-size: 18px;
+        padding: 10px 30px;
+        background: #fff;
+        color: #4A00E0;
+    }
+</style>
+<script>
+      const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      function generateString(length) {
+        let result = " ";
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+        return result;
+      }
+
+      var qrcode = new QRCode("qrcode", generateString(12));
+    </script>
+
+</script>
+{% endblock %}
+
