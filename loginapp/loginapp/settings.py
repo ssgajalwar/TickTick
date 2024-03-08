@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-vf^5x8^za=6z%&o=aw^_81cmfwegb7oe(*$*e2k21hfq#dx@#2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*.ngrok-free.app','localhost:8000','*']
 
 # Application definition
 
@@ -48,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'loginapp.urls'

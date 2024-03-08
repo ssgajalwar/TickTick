@@ -32,6 +32,18 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # user = models.CharField(max_length=255)
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
-
+    roll_no = models.CharField(max_length=20)
+    
     def __str__(self):
         return self.user.username
+
+
+class RecordAttendance(models.Model):
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    rollno = models.CharField(max_length=20)
+    date = models.DateField()
+    attendance_status = models.BooleanField()
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    subject = models.CharField(max_length=255)
+    def __str__(self):
+        return f"{self.username} - {self.date}"

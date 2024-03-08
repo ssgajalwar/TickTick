@@ -23,6 +23,8 @@ class AdminRegistrationForm(UserCreationForm):
         fields = ['username', 'password1', 'password2']
 
 class StudentRegistrationForm(UserCreationForm):
+    # roll_no = forms.CharField(max_length=20)
+    # course = forms.ModelChoiceField(queryset=Course.objects.all())
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2']
@@ -35,7 +37,7 @@ class TeacherRegistrationForm(UserCreationForm):
 class StudentAssignForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['user', 'course']  
+        fields = ['user', 'course','roll_no']  
 
 class CreateCourseForm(forms.ModelForm):
     class Meta:

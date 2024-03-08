@@ -1,7 +1,7 @@
 # yourappname/views.py
 # demoapp/views.py
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,8 +10,9 @@ from .forms import AdminRegistrationForm, StudentRegistrationForm, TeacherRegist
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from .decorator import allowed_users
-from .models import Course,Subject,Student
+from .models import Course,Subject,Student,RecordAttendance
 from .utils import unslugify
+from datetime import date
 
 
 student_group, created = Group.objects.get_or_create(name='student')
@@ -82,7 +83,7 @@ def student_registration(request):
             # user = form.save()
             print('saved successfully')
             # login(request, user,backend=backend)
-            return redirect('/demoapp/student')
+            return redirect('/demoapp/appadmin/assignstudent/')
     else:
         form = StudentRegistrationForm()
     return render(request, 'registration/student_registration.html', {'form': form})
@@ -174,6 +175,7 @@ def assignstudent(request):
     print(request.method)
     if request.method == 'POST':
         form = StudentAssignForm(request.POST)
+        print(form)
         if form.is_valid():
             form.save()    
 
@@ -187,7 +189,7 @@ def assignstudent(request):
 def courseDetail(request,course_name):
     print(unslugify(course_name))
     data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
-
+    print(Subject.objects.filter(course_id__course_name='Btech'))
     return render(request,'coursedetail.html',{
         'data':data,
         'course_id':course_name
@@ -195,10 +197,56 @@ def courseDetail(request,course_name):
 @login_required(login_url='/demoapp/login/appadmin/')
 @allowed_users(allowed_roles=['admin'])
 def generateqr(request,course_name,subject_name):
-    print(course_name)
-    print(subject_name)
+    print(request.method)
+    present_student = RecordAttendance.objects.all()
+    if request.method == "POST":
+        print("POST")
+    else:    
+        print(course_name)
+        print(subject_name)
 
-    return render(request,'generateqr.html')
+    return render(request,'generateqr.html',{
+        'course_name':course_name,
+        'subject_name':subject_name,
+        'present_student':present_student,
+        'present_length':len(present_student)
+    })
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def allstudent(request,course_name):
+    print("Show All Students for"+course_name)
+    for_course = Course.objects.filter(course_name=course_name.upper()).first()
+    allstudent_list = Student.objects.filter(course=for_course)
+    return render(request,'allstudent.html',{
+        'student_list':allstudent_list,
+        'student_length':len(allstudent_list)
+    })
+
+@login_required(login_url='/demoapp/login/student/')
+@allowed_users(allowed_roles=['student'])
+def markattendance(request,course_name,subject_name,code):
+    print(request.user)
+    print(course_name,subject_name,code,request.user.username)
+
+    student = Student.objects.get(user=request.user.id)
+    roll_no = student.roll_no
+    print(roll_no)
+    print(request.user.id)
+    form = RecordAttendance(
+        username=User.objects.get(username=request.user.username),
+        rollno=roll_no,  # Assuming rollno is stored in the user's profile
+        date=date.today(),
+        attendance_status=True,
+        course=Course.objects.get(course_name=course_name.upper()),
+        subject=subject_name
+    )
+    # print(request.user.profile.roll_no)
+    form.save()
+    # details = course_name,subject_name,code
+    return HttpResponse("Attendance Marked Successfully for : "+request.user.username)
+
+
 
 @login_required()
 def user_logout(request):

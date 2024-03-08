@@ -1,0 +1,71 @@
+{% extends 'base.html'%}
+{% block content %}
+<!-- <link rel="stylesheet" href="./style.css"> -->
+<div class=" bg-theme text-white" style="min-height: 100vh;">
+    <div class="container h-100 d-flex  flex-column">
+        <h3 class="text-left text-light mt-5 mb-4"> {{student_length}} Records found </h3>
+        <div class="allstudent_wrapper">
+            {% if student_length != 0 %}
+            <table class="allstudent">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Mark Attendance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in student_list %}
+                    <tr>
+                        <td>{{i.roll_no}}</td>
+                        <td>{{i.user}}</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <h3 class="theme_text">No record found</h3>        
+            {% endif %}
+
+        </div>
+        
+    </div>
+</div>
+
+<style>
+
+    .bg-theme{
+    background: #8E2DE2;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .btn{
+        border-radius: 25px;
+        font-size: 18px;
+        padding: 10px 30px;
+        background: #fff;
+        color: #4A00E0;
+    }
+    .allstudent_wrapper{
+        background: #fff;
+        padding: 25px;
+        border-radius: 20px;
+    }
+    .theme_text{
+        color: #4A00E0;
+    }
+    table.allstudent{      
+        color: #4A00E0;
+        
+    }
+    table.allstudent td{
+        padding: 10px 30px;
+    }
+    table.allstudent th{
+        padding: 10px 30px;
+    }
+</style>
+{% endblock %}

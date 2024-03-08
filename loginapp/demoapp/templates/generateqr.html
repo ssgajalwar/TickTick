@@ -1,15 +1,51 @@
 {% extends 'base.html'%}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- <link rel="stylesheet" href="./style.css"> -->
 <div class="homepage bg-theme">
     <div class="container h-100 d-flex justify-content-center align-items-center flex-column">
         <h1 class="text-center text-light">Welcome To AMS</h1>
         <div id="qrcode"></div>
-    </div>
-</div>
 
+        <div id="linkDemo"></div>
+        
+    </div>
+
+</div>
+<div class=" bg-theme text-white" style="min-height: 100vh;">
+  <div class="container h-100 d-flex  flex-column">
+      <h3 class="text-left text-light mt-5 mb-4"> {{present_length}} Present Students </h3>
+      <div class="allstudent_wrapper">
+          {% if present_length != 0 %}
+          <table class="allstudent">
+              <thead>
+                  <tr>
+                      <th>Roll No</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                      <th>Mark Attendance</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for i in present_student %}
+                  <tr>
+                      <td>{{i}}</td>
+                      <td>1</td>
+                      <td>1</td>
+                      <td>1</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          {% else %}
+              <h3 class="theme_text">No record found</h3>        
+          {% endif %}
+
+      </div>
+      
+  </div>
+</div>
 <style>
     .homepage{
         height: 100vh;
@@ -27,23 +63,56 @@
         background: #fff;
         color: #4A00E0;
     }
+    .allstudent_wrapper{
+        background: #fff;
+        padding: 25px;
+        border-radius: 20px;
+    }
+    .theme_text{
+        color: #4A00E0;
+    }
+    table.allstudent{      
+        color: #4A00E0;
+        
+    }
+    table.allstudent td{
+        padding: 10px 30px;
+    }
+    table.allstudent th{
+        padding: 10px 30px;
+    }
 </style>
 <script>
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
       function generateString(length) {
-        let result = " ";
+        window.location.href
+        
+        let result = "";
         const charactersLength = characters.length;
         for (let i = 0; i < length; i++) {
           result += characters.charAt(
             Math.floor(Math.random() * charactersLength)
           );
         }
-        return result;
+        let today = new Date();
+        let parseLink = `${window.location.href}?code=${result}&date=${today}`;
+        let course_name = ""
+        let newUrl = `http://localhost:8000/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}`;
+        
+
+        $("#linkDemo").append(
+          `
+            <a href="${newUrl}">Link</a>
+          `
+          )
+        return newUrl;
       }
 
       var qrcode = new QRCode("qrcode", generateString(12));
+
+
     </script>
 
 </script>
