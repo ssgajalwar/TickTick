@@ -1,0 +1,70 @@
+{% extends 'base.html'%}
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+<div class=" bg-theme " style="min-height: 100vh;">
+    {% include 'navbar.html'%}
+    <div class="container h-100 d-flex  ">
+        {% include 'sidebar.html'%}
+        <div class="container mx-3 w-100">
+            <!-- <h3 class="text-left text-light mt-5 mb-4"> {{present_length|default:'0'}} Records found </h3> -->
+            <div class="d-flex flex-wrap row">
+                {% for sub in subject_list %}
+                <div class="col-md-6 col-sm-12">
+                    <h2 class="text-white text-capitalize my-2">{{sub}}</h2>
+                    <div class="allstudent_wrapper ">
+                            {% if present_length != 0 %}
+                            <table class="allstudent myTable">
+                                <thead>
+                                    <tr>
+                                        <th class="px-2">Roll No</th>
+                                        <th class="px-2">Name</th>
+                                        <th class="px-2">Date</th>
+                                        <th class="px-2">Subject</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+    
+                                    {% for i in present_student %}
+                                        {% if i.subject == sub %}
+                                            <tr>
+                                                <td class="px-2">{{i.rollno}}</td>
+                                                <td class="px-2">{{i.username}}</td>
+                                                <td class="px-2">{{i.date}}</td>
+                                                <td class="px-2">{{i.subject}}</td>
+                                            </tr>
+                                        {% endif %}    
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                                <h3 class="theme_text">No record found</h3>        
+                            {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </div>
+</div>
+<style>
+    .allstudent_wrapper div.dt-container .dt-paging .dt-paging-button.current, div.dt-container .dt-paging .dt-paging-button.current:hover{
+        color: black !important;
+
+    }
+
+</style>
+<script>
+$(document).ready(function() {
+    var table = $('.myTable').DataTable({
+        // "lengthMenu": false, // Remove the length menu
+        // Other options...
+    });
+    table.DataTable().settings()[0].oLanguage.sLengthMenu = "_MENU_";
+    table.draw();
+    $('.dt-length').hide()
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,181 @@
+{% extends 'base.html'%}
+{% block content %}
+<!-- <link rel="stylesheet" href="./style.css"> -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<div class=" bg-theme text-white" style="min-height: 100vh;">
+    {% include 'navbar.html'%}
+    <div class="container h-100 d-flex  ">
+        {% include 'sidebar.html'%}
+        <div class="container mx-3 w-100">
+            <div class="allstudent_wrapper my-3">
+                <div id="chart"></div>
+            </div>
+            <div class="allstudent_wrapper my-3 d-flex gap-3">
+                <div id="chart2" ></div>
+                <div id="chart3" class="w-50"></div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+  var options = {
+          series: [{
+          name: 'Marine Sprite',
+          data: [44, 55, 41, 37, 22, 43, 21]
+        }, {
+          name: 'Striking Calf',
+          data: [53, 32, 33, 52, 13, 43, 32]
+        }, {
+          name: 'Tank Picture',
+          data: [12, 17, 11, 9, 15, 11, 20]
+        }, {
+          name: 'Bucket Slope',
+          data: [9, 7, 5, 8, 6, 9, 4]
+        }, {
+          name: 'Reborn Kid',
+          data: [25, 12, 19, 32, 25, 24, 10]
+        }],
+          chart: {
+          type: 'bar',
+          height: 350,
+          stacked: true,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            dataLabels: {
+              total: {
+                enabled: true,
+                offsetX: 0,
+                style: {
+                  fontSize: '13px',
+                  fontWeight: 900
+                }
+              }
+            }
+          },
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        title: {
+          text: 'Attendance Monthly Report'
+        },
+        xaxis: {
+          categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
+          labels: {
+            formatter: function (val) {
+              return val + "K"
+            }
+          }
+        },
+        yaxis: {
+          title: {
+            text: undefined
+          },
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + "K"
+            }
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'left',
+          offsetX: 40
+        }
+    };
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    var options = {
+          series: [44, 55, 13, 43, 22],
+          chart: {
+          width: 380,
+          type: 'pie',
+        },
+        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+    };
+    var chart2 = new ApexCharts(document.querySelector("#chart2"), options);
+    chart2.render();
+
+    var options = {
+          series: [{
+          name: 'Net Profit',
+          data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+        }, {
+          name: 'Revenue',
+          data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+        }, {
+          name: 'Free Cash Flow',
+          data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+        }],
+          chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            endingShape: 'rounded'
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        },
+        yaxis: {
+          title: {
+            text: '$ (thousands)'
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return "$ " + val + " thousands"
+            }
+          }
+        }
+        };
+
+        var chart3 = new ApexCharts(document.querySelector("#chart3"), options);
+        chart3.render();    
+      
+    
+      
+      
+    
+</script>
+{% endblock %}
+
+

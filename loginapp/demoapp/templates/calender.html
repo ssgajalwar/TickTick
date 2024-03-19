@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+
+    <script>
+      let getEvent = () => {
+          return new Promise((resolve, reject) => {
+              $.ajax({
+                  url: 'http://localhost:8000/demoapp/appadmin/coursedetail/lectures/mca',
+                  type: 'GET',
+                  dataType: 'json',
+                  success: function(data) {
+                      console.log('Data received:', data);
+                      resolve(data);
+                  },
+                  error: function(xhr, status, error) {
+                      console.error('Error fetching data:', error);
+                      reject(error);
+                  }
+              });
+          });
+      }
+
+      document.addEventListener('DOMContentLoaded', async function() {
+          try {
+              const eventData = await getEvent();
+
+              var calendarEl = document.getElementById('calendar');
+              var calendar = new FullCalendar.Calendar(calendarEl, {
+                  navLinks: true,
+                  initialView: 'dayGridMonth',
+                  events: eventData, // Pass eventData directly here
+                  color: 'yellow',
+                  textColor: 'black',
+                  eventClick: function(info) {
+                      alert('Event: ' + info.event.title);
+                  },
+                  eventContent: function(info) {
+                      return info.event.title;
+                  },
+              });
+              calendar.render();
+          } catch (error) {
+              console.error('Error:', error);
+          }
+      });
+          
+
+    </script>
+  </head>
+  <body>
+    <div class="bg-theme">
+        {% include 'navbar.html'%}
+        <div class="container h-100 py-3 d-flex">
+            {% include 'sidebar.html'%}
+
+            <div class="w-100 bg-white mx-3 p-5" style="border-radius: 20px;">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>    
+  </body>
+
+</html>
+{% endblock %}

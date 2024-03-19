@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +26,10 @@ SECRET_KEY = 'django-insecure-vf^5x8^za=6z%&o=aw^_81cmfwegb7oe(*$*e2k21hfq#dx@#2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*.ngrok-free.app','localhost:8000','*']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://350b-103-121-72-55.ngrok-free.app',]
+CORS_ORIGIN_WHITELIST = ['https://350b-103-121-72-55.ngrok-free.app']
+# ALLOWED_HOSTS = ['*.ngrok-free.app','localhost:8000','*']
 
 # Application definition
 
@@ -76,8 +80,12 @@ WSGI_APPLICATION = 'loginapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'attendance_system',
+        'USER': 'root',
+        'PASSWORD': 'shree@123',
+        'HOST': 'localhost',  # Assuming MySQL is running locally
+        'PORT': '3306',       # Default MySQL port
     }
 }
 
@@ -116,8 +124,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

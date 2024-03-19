@@ -1,0 +1,21 @@
+{% extends 'registration/login.html' %}
+<!-- demoapp/templates/student_login.html -->
+
+{% block content %}
+<div class=" bg-theme">
+  {% include 'navbar.html'%}
+
+  <div class="container py-5 h-100 d-flex justify-content-center align-items-center">
+      <div class="w-50">
+        <h2 class="text-white text-center">Add Lecture Details</h2>
+        <form action="{% url 'demoapp:lectures' course_name=course_id %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}} 
+            <input type="submit" value="Submit">
+        </form>
+      </div>
+  </div>
+</div>
+
+{% endblock %}
+

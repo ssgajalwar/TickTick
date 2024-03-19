@@ -6,20 +6,24 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate,logout
-from .forms import AdminRegistrationForm, StudentRegistrationForm, TeacherRegistrationForm,StudentAssignForm,CreateCourseForm,CreateSubjectForm
+from .forms import AdminRegistrationForm, StudentRegistrationForm, TeacherRegistrationForm,StudentAssignForm,CreateCourseForm,CreateSubjectForm,LecturesForm
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from .decorator import allowed_users
-from .models import Course,Subject,Student,RecordAttendance
+from .models import Course,Subject,Student,RecordAttendance,Lectures,QrCodeLog
 from .utils import unslugify
 from datetime import date
-
+from django.utils import timezone
+from django.http import JsonResponse
+from django.core.serializers import serialize
 
 student_group, created = Group.objects.get_or_create(name='student')
 admin_group, created = Group.objects.get_or_create(name='admin')
 teacher_group, created = Group.objects.get_or_create(name='teacher')
 
 backend='django.contrib.auth.backends.ModelBackend'
+
+today_date = timezone.now().date()
 
 class CustomLoginView(LoginView):
     def get_success_url(self):
@@ -178,6 +182,7 @@ def assignstudent(request):
         print(form)
         if form.is_valid():
             form.save()    
+            return redirect('/demoapp/appadmin/success')
 
     form = StudentAssignForm()
     return render(request,'forms/assignstudent.html',{
@@ -188,7 +193,10 @@ def assignstudent(request):
 @allowed_users(allowed_roles=['admin'])
 def courseDetail(request,course_name):
     print(unslugify(course_name))
-    data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
+    
+    data = Lectures.objects.filter(start=today_date)
+    print(data)
+    # data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
     print(Subject.objects.filter(course_id__course_name='Btech'))
     return render(request,'coursedetail.html',{
         'data':data,
@@ -220,31 +228,101 @@ def allstudent(request,course_name):
     allstudent_list = Student.objects.filter(course=for_course)
     return render(request,'allstudent.html',{
         'student_list':allstudent_list,
-        'student_length':len(allstudent_list)
+        'student_length':len(allstudent_list),
+        'course_id':course_name
+
+    })
+
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def courseDashboard(request,course_name):
+    print("Show All Students for"+course_name)
+    for_course = Course.objects.filter(course_name=course_name.upper()).first()
+    allstudent_list = Student.objects.filter(course=for_course)
+    return render(request,'course_dashboard.html',{
+        'student_list':allstudent_list,
+        'student_length':len(allstudent_list),
+        'course_id':course_name
+
+    })
+
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def presentStudent(request,course_name):
+    print("Show All Students for"+course_name)
+    for_course = Course.objects.filter(course_name=course_name.upper()).first()
+    presentStudent = RecordAttendance.objects.all()
+    
+    records_today = RecordAttendance.objects.filter(date=today_date)
+    unique_subjects = RecordAttendance.objects.values_list('subject', flat=True).distinct()
+    return render(request,'presentStudent.html',{
+        'present_student':records_today,
+        'present_length':len(records_today),
+        'course_id':course_name,
+        'subject_list':unique_subjects
+    })
+
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def calender(request,course_name):
+    print("Show Calender for"+course_name)
+    for_course = Course.objects.filter(course_name=course_name.upper()).first()
+    allstudent_list = Student.objects.filter(course=for_course)
+    print(unslugify(course_name))
+    data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
+    return render(request,'calender.html',{
+        'subject_list':[item['subject_name'] for item in data],
+        'student_list':allstudent_list,
+        'student_length':len(allstudent_list),
+        'course_id':course_name
     })
 
 @login_required(login_url='/demoapp/login/student/')
 @allowed_users(allowed_roles=['student'])
 def markattendance(request,course_name,subject_name,code):
-    print(request.user)
-    print(course_name,subject_name,code,request.user.username)
-
+    # print(request.user)
+    # print(course_name,subject_name,code,request.user.username)
     student = Student.objects.get(user=request.user.id)
     roll_no = student.roll_no
-    print(roll_no)
-    print(request.user.id)
-    form = RecordAttendance(
-        username=User.objects.get(username=request.user.username),
-        rollno=roll_no,  # Assuming rollno is stored in the user's profile
-        date=date.today(),
-        attendance_status=True,
-        course=Course.objects.get(course_name=course_name.upper()),
-        subject=subject_name
-    )
-    # print(request.user.profile.roll_no)
-    form.save()
+    code_exist = QrCodeLog.objects.filter(subject=subject_name).exists()
+    print(code_exist)
+    if code_exist:
+        getcode =  QrCodeLog.objects.get(subject=subject_name)
+        if getcode.code == code:
+            # Check if a person with the given roll number and subject name exists for today
+            roll_exist = RecordAttendance.objects.filter(rollno=roll_no, date=today_date).exists()
+            subject_exist = RecordAttendance.objects.filter(subject=subject_name, date=today_date).exists()
+
+            # If you want to check if both exist
+            person_exist = RecordAttendance.objects.filter(rollno=roll_no, subject=subject_name, date=today_date).exists()
+            print(roll_exist,subject_exist)
+            print(person_exist)
+            if person_exist:
+                return HttpResponse("Attendance Already Existed: "+request.user.username)
+            form = RecordAttendance(
+                username=User.objects.get(username=request.user.username),
+                rollno=roll_no,  # Assuming rollno is stored in the user's profile
+                date=date.today(),
+                attendance_status=True,
+                course=Course.objects.get(course_name=course_name.upper()),
+                subject=subject_name
+            )
+            # print(request.user.profile.roll_no)
+            form.save()
+            return HttpResponse("Attendance Marked Successfully for : "+request.user.username)
+
+    # subject_obj = QrCodeLog.objects.all()
+    # print(subject_obj)
+    # print(subject_obj.code,code)
+
+    # print(roll_no)
+    # print(request.user.id)
+
     # details = course_name,subject_name,code
-    return HttpResponse("Attendance Marked Successfully for : "+request.user.username)
+    return HttpResponse("Qr Code Expired : "+request.user.username)
 
 
 
@@ -254,7 +332,86 @@ def user_logout(request):
     return redirect('/demoapp/hello') 
 
 def hello(request):
-    print(User.objects.all())
-    print(Group.objects.all())
+    # print(User.objects.all())
+    # print(Group.objects.all())
     return render(request,'hello.html')
 
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def holiday(request,course_name):
+
+    return render(request,'holiday.html',{
+        'course_id':course_name
+    })
+
+@login_required(login_url='/demoapp/login/appadmin/')
+@allowed_users(allowed_roles=['admin'])
+def holiday(request,course_name):
+
+    return render(request,'holiday.html',{
+        'course_id':course_name
+    })
+
+
+def forum(request,course_name):
+
+    return render(request,'forum.html',{
+        'course_id':course_name
+    })
+
+def lectures(request,course_name):
+    if request.method == 'POST':
+        # print(title=request.POST.get('title'))
+        form = LecturesForm(request.POST)
+        print(form)
+        if form.is_valid():
+            form.save()
+            print("Saved data")
+        # data = Lectures.objects.all()
+        # serialized_data = [{'title': obj.title, 'start': obj.start, 'end':obj.end} for obj in data]
+        # Lectures.objects.create()
+        return HttpResponse("Lecture added successfully")
+            
+    else:    
+        data = Lectures.objects.all()
+        
+        serialized_data = []
+        # serialized_data = [{'title': obj.title, 'start': obj.start, 'end':obj.end} for obj in data]
+        for i in data:
+            print(i.title, i.start, i.end)
+            print(type(str(i.title))) 
+            temp = {'title':str(i.title), 'start': str(i.start), 'end':str(i.end)}
+            serialized_data.append(temp)
+            
+            # print(subject_name)
+        # Return JSON response
+        return JsonResponse(serialized_data, safe=False)
+
+
+def addLectures(request,course_name):
+    form = LecturesForm(request.POST)
+    # Return JSON response
+    return render(request,'addlectures.html',{
+        'form':form,
+        'course_id':course_name
+    })
+
+def success(request):
+    return render(request,'success.html',{
+        # 'course_id':'course_name'
+    })
+
+def qrcodeLog(request,course_name,subject_name,code):
+    subject_exists = QrCodeLog.objects.filter(subject=subject_name).exists()
+    # if subject name already exist then ubdate otherwise create new
+    if subject_exists:
+        subject_obj = QrCodeLog.objects.get(subject=subject_name)
+        subject_obj.code = code
+        subject_obj.save()
+        print('update')
+    else:
+        #create new object      
+        obj = QrCodeLog.objects.create(code=code,course=course_name,subject=subject_name)
+        obj.save()
+    return HttpResponse('received')

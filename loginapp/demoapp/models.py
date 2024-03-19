@@ -47,3 +47,18 @@ class RecordAttendance(models.Model):
     subject = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.username} - {self.date}"
+    
+class Lectures(models.Model):
+    title = models.ForeignKey('Subject', on_delete=models.CASCADE)
+    start = models.DateField()
+    end = models.DateField()
+    duration = models.FloatField()
+    def __str__(self):
+        return f"{self.title}"
+    
+class QrCodeLog(models.Model):
+    code = models.CharField(max_length=255)
+    course =  models.CharField(max_length=255)   
+    subject = models.CharField(max_length=255)
+    def __str__(self):
+        return f"{self.course}-{self.subject}"

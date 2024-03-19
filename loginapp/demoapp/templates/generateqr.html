@@ -3,9 +3,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- <link rel="stylesheet" href="./style.css"> -->
-<div class="homepage bg-theme">
-    <div class="container h-100 d-flex justify-content-center align-items-center flex-column">
-        <h1 class="text-center text-light">Welcome To AMS</h1>
+<div class="homepage bg-theme ">
+    {% include 'navbar.html'%}
+
+    <div class="container h-75 d-flex justify-content-center align-items-center flex-column">
         <div id="qrcode"></div>
 
         <div id="linkDemo"></div>
@@ -13,49 +14,13 @@
     </div>
 
 </div>
-<div class=" bg-theme text-white" style="min-height: 100vh;">
-  <div class="container h-100 d-flex  flex-column">
-      <h3 class="text-left text-light mt-5 mb-4"> {{present_length}} Present Students </h3>
-      <div class="allstudent_wrapper">
-          {% if present_length != 0 %}
-          <table class="allstudent">
-              <thead>
-                  <tr>
-                      <th>Roll No</th>
-                      <th>Name</th>
-                      <th>Status</th>
-                      <th>Mark Attendance</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {% for i in present_student %}
-                  <tr>
-                      <td>{{i}}</td>
-                      <td>1</td>
-                      <td>1</td>
-                      <td>1</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
-          {% else %}
-              <h3 class="theme_text">No record found</h3>        
-          {% endif %}
 
-      </div>
-      
-  </div>
-</div>
 <style>
     .homepage{
         height: 100vh;
    
     }
-    .bg-theme{
-    background: #8E2DE2;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
+
     .btn{
         border-radius: 25px;
         font-size: 18px;
@@ -98,10 +63,44 @@
         }
         let today = new Date();
         let parseLink = `${window.location.href}?code=${result}&date=${today}`;
-        let course_name = ""
-        let newUrl = `http://localhost:8000/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}`;
-        
-
+        let course_name = "";
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}`,
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: csrftoken
+                // Other data you want to include in the request
+            },
+            success: function(data, status) {
+                alert("Data: " + data + "\nStatus: " + status);
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+        // setTimeout(function(){
+        //   result = "x";
+        //   $.ajax({
+        //     url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}`,
+        //     type: 'POST',
+        //     data: {
+        //         csrfmiddlewaretoken: csrftoken
+        //         // Other data you want to include in the request
+        //     },
+        //     success: function(data, status) {
+        //         alert("Data: " + data + "\nStatus: " + status);
+        //     },
+        //     error: function(xhr, status, error) {
+        //         // Handle errors
+        //         console.error(xhr.responseText);
+        //     }
+        // });
+        // alert('QR code Expired!!!')
+        // },30000)
+        let newUrl = `https://350b-103-121-72-55.ngrok-free.app/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}`;
+        // let newUrl = "https://www.youtube.com/";
         $("#linkDemo").append(
           `
             <a href="${newUrl}">Link</a>
@@ -112,7 +111,21 @@
 
       var qrcode = new QRCode("qrcode", generateString(12));
 
-
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Check if this cookie string begins with the name we want
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
     </script>
 
 </script>

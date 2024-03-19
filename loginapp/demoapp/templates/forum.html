@@ -1,0 +1,65 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content %}
+<!-- <link rel="stylesheet" href="./style.css"> -->
+<div class=" bg-theme text-white" style="min-height: 100vh;">
+    {% include 'navbar.html'%}
+    <div class="container h-100 d-flex  ">
+        {% include 'sidebar.html'%}
+        <div class="container mx-3 py-3 w-100">
+            <div class="forum-container">
+                
+                <div class="msg-box">
+                    <textarea name="" id=""  placeholder="Type message here"></textarea>
+                    <img src="{% static '/demoapp/images/send.png'%}" alt="send icon"/>
+                    <img src="{% static '/demoapp/images/read.png'%}" alt="send icon"/>
+                    <img src="{% static '/demoapp/images/keyboard.png'%}" alt="send icon"/>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+    .forum-container{
+        background: #fff;
+        height: 100%;
+        width: 100%;
+        border-radius: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+    .msg-box{
+        position: absolute;
+        /* background: #c9c9c9; */
+        display: flex; 
+        gap: 14px;
+        width: 100%;
+        bottom: 0;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+-webkit-box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+-moz-box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+    }
+    .msg-box textarea{
+        width: 80%;
+        border-radius: 25px;
+        padding: 9px 16px;
+        height: 50px;
+        border: none;
+        outline: none;
+        box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+-webkit-box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+-moz-box-shadow: -3px 2px 47px -1px rgba(0,0,0,0.53);
+    }
+    .msg-box img{
+        height: 50px;
+    }
+</style>
+{% endblock %}
+
+

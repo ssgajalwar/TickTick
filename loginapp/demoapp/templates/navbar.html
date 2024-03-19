@@ -1,0 +1,14 @@
+{% load static %}
+<nav class="navbar navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'demoapp:admin_dashboard' %}">
+        <img src="{% static 'demoapp/images/book.png' %}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+        TickTick
+      </a>
+      <div class="d-flex gap-2 justify-content-between align-items-center py-3">
+        <!-- <h4>Hello {{ username }}, your role is admin</h4> -->
+        <a class="btn py-1 text-white bg-theme" style="background: linear-gradient(to right, #4A00E0, #8E2DE2);" href="{% url 'demoapp:admin_dashboard' %}">Admin Dashboard</a>
+        <a class="btn py-1 text-white bg-theme" style="background: linear-gradient(to right, #4A00E0, #8E2DE2);" href="{% url 'demoapp:user_logout' %}">Logout</a>
+      </div>
+    </div>
+</nav>

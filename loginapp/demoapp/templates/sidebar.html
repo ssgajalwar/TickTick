@@ -1,0 +1,120 @@
+<ul class="px-0">
+    <li class="list-unstyled"><a href="{% url 'demoapp:coursedetail' course_name=course_id %}" class="white-btn">Attendance</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:coursedashboard' course_name=course_id %}" class="white-btn">Dashboard</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:calender' course_name=course_id %}" class="white-btn">Calender</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:presentStudent' course_name=course_id %}" class="white-btn">Present Student's</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:allstudent' course_name=course_id %}" class="white-btn">All Student</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:holiday' course_name=course_id %}" class="white-btn">Holiday</a></li>
+    <li class="list-unstyled"><a href="{% url 'demoapp:forum' course_name=course_id %}" class="white-btn">Forum</a></li>
+    <li class="list-unstyled"><a href="" class="white-btn">Leave Approve</a></li>
+</ul>
+<style>
+    .bg-theme {
+        background: #8E2DE2;
+        background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
+        background: linear-gradient(to right, #4A00E0, #8E2DE2);
+    }
+
+    .btn {
+        border-radius: 25px;
+        font-size: 18px;
+        padding: 10px 30px;
+        background: #fff;
+        color: #4A00E0;
+    }
+
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 25px;
+    }
+
+    form label,
+    form input {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    form input {
+        border-radius: 25px;
+        padding: 3px 3px 3px 10px;
+        border: none;
+        outline: none;
+        background: #e0e0e0;
+        box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+    }
+
+    form button {
+        background: #8E2DE2;
+        border-radius: 25px;
+        font-size: 14px;
+        padding: 5px 30px !important;
+        border: none;
+        outline: none;
+        color: #fff;
+        background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
+        background: linear-gradient(to right, #4A00E0, #8E2DE2);
+    }
+
+    form a {
+        color: #4A00E0;
+    }
+
+    ul li {
+        list-style: none;
+        margin-top: 15px;
+        height: 55px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .white-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #4A00E0;
+        text-decoration: none;
+        height: 55px;
+        width: 20%;
+        min-width: 200px;
+        border-radius: 40px;
+        background: #fff;
+    }
+
+    .vh100 {
+        height: 100vh;
+    }
+
+    .event1 {
+        padding: 10px;
+        color: #fff;
+        background: #8E2DE2;
+        background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
+        background: linear-gradient(to right, #4A00E0, #8E2DE2);
+        cursor: pointer;
+    }
+
+    .allstudent_wrapper {
+        background: #fff;
+        padding: 25px;
+        border-radius: 20px;
+    }
+
+    .theme_text {
+        color: #4A00E0;
+    }
+
+    table.allstudent {
+        color: #4A00E0;
+    }
+
+    table.allstudent td,
+    table.allstudent th {
+        padding: 10px 30px;
+    }
+
+    /* ==================== */
+    
+</style>
