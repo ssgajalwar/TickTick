@@ -51,7 +51,32 @@
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-      function generateString(length) {
+        var userLocation;
+        var latitude;
+        var longitude;
+        function getLocation() {
+            console.log(navigator.geolocation)
+            if (navigator.geolocation) {
+                console.log("userLocation")
+                navigator.geolocation.getCurrentPosition(function(position){
+                    latitude = position.coords.latitude;
+                    longitude = position.coords.longitude;  
+                    let newUrl = generateString(12,latitude,longitude)  
+                    var qrcode = new QRCode("qrcode", newUrl);
+                    $("#linkDemo").append(
+                    `
+                        <a href="${newUrl}">Link</a>
+                    `
+                    )
+                    console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+                });
+            } 
+        }
+     
+        getLocation()
+
+
+      function generateString(length,lat,lang) {
         window.location.href
         
         let result = "";
@@ -65,8 +90,9 @@
         let parseLink = `${window.location.href}?code=${result}&date=${today}`;
         let course_name = "";
         var csrftoken = getCookie('csrftoken');
+        
         $.ajax({
-            url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}`,
+            url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&lang=${lang}`,
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: csrftoken
@@ -99,17 +125,14 @@
         // });
         // alert('QR code Expired!!!')
         // },30000)
-        let newUrl = `https://350b-103-121-72-55.ngrok-free.app/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}`;
-        // let newUrl = "https://www.youtube.com/";
-        $("#linkDemo").append(
-          `
-            <a href="${newUrl}">Link</a>
-          `
-          )
+        // https://fea7-103-121-73-131.ngrok-free.app/demoapp/hello/
+        let newUrl = `https://9549-103-121-73-131.ngrok-free.app/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&lang=${lang}`;
+    
+        https://5069-103-121-73-131.ngrok-free.app/
         return newUrl;
       }
 
-      var qrcode = new QRCode("qrcode", generateString(12));
+
 
       function getCookie(name) {
         var cookieValue = null;

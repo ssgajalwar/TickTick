@@ -9,40 +9,44 @@
         <div class="container mx-3 w-100">
             <!-- <h3 class="text-left text-light mt-5 mb-4"> {{present_length|default:'0'}} Records found </h3> -->
             <div class="d-flex flex-wrap row">
-                {% for sub in subject_list %}
-                <div class="col-md-6 col-sm-12">
-                    <h2 class="text-white text-capitalize my-2">{{sub}}</h2>
-                    <div class="allstudent_wrapper ">
-                            {% if present_length != 0 %}
-                            <table class="allstudent myTable">
-                                <thead>
-                                    <tr>
-                                        <th class="px-2">Roll No</th>
-                                        <th class="px-2">Name</th>
-                                        <th class="px-2">Date</th>
-                                        <th class="px-2">Subject</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-    
-                                    {% for i in present_student %}
-                                        {% if i.subject == sub %}
-                                            <tr>
-                                                <td class="px-2">{{i.rollno}}</td>
-                                                <td class="px-2">{{i.username}}</td>
-                                                <td class="px-2">{{i.date}}</td>
-                                                <td class="px-2">{{i.subject}}</td>
-                                            </tr>
-                                        {% endif %}    
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% else %}
-                                <h3 class="theme_text">No record found</h3>        
-                            {% endif %}
+                {% if sub %}
+                    {% for sub in subject_list %}
+                    <div class="col-md-6 col-sm-12">
+                        <h2 class="text-white text-capitalize my-2">{{sub}}</h2>
+                        <div class="allstudent_wrapper ">
+                                {% if present_length != 0 %}
+                                <table class="allstudent myTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-2">Roll No</th>
+                                            <th class="px-2">Name</th>
+                                            <th class="px-2">Date</th>
+                                            <th class="px-2">Subject</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        
+                                        {% for i in present_student %}
+                                            {% if i.subject == sub %}
+                                                <tr>
+                                                    <td class="px-2">{{i.rollno}}</td>
+                                                    <td class="px-2">{{i.username}}</td>
+                                                    <td class="px-2">{{i.date}}</td>
+                                                    <td class="px-2">{{i.subject}}</td>
+                                                </tr>
+                                            {% endif %}    
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                    <h3 class="theme_text">No record found</h3>        
+                                {% endif %}
+                        </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <h3 class="mt-3 text-light">No Data Found</h3>    
+                {% endif %}
             </div>
         </div>
         

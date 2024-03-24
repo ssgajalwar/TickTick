@@ -1,11 +1,12 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView
-from .views import addLectures,lectures,presentStudent,calender,allstudent,markattendance,generateqr,courseDetail,assignstudent,addsubject,addcourse,CustomLoginView,admin_dashboard, student_dashboard, teacher_dashboard,hello,admin_registration,student_registration,teacher_registration,user_logout
+from .views import leaveApply,addLectures,lectures,presentStudent,calender,allstudent,markattendance,generateqr,courseDetail,assignstudent,addsubject,addcourse,CustomLoginView,admin_dashboard, student_dashboard, teacher_dashboard,hello,admin_registration,student_registration,teacher_registration,user_logout
 from . import views
 app_name = 'demoapp'
 
 urlpatterns = [
     path('hello/',views.hello,name='hello'),
+    path('map/',views.map,name='map'),
     path('appadmin/', views.admin_dashboard, name='admin_dashboard'),
     path('student/', student_dashboard, name='student_dashboard'),
     path('teacher/', teacher_dashboard, name='teacher_dashboard'),
@@ -33,6 +34,11 @@ urlpatterns = [
     path('appadmin/generateqr/<slug:course_name>/<slug:subject_name>', generateqr, name='generateqr'),
     path('appadmin/qrcodelog/<slug:course_name>/<slug:subject_name>/<slug:code>', views.qrcodeLog, name='qrcodelog'),
 
-    path('student/markattendance/<slug:course_name>/<slug:subject_name>/<slug:code>',markattendance,name="markattendance")
-#     # Add more URLs as needed
+
+
+    # Student URL's
+    path('student/markattendance/<slug:course_name>/<slug:subject_name>/<slug:code>',markattendance,name="markattendance"),
+    path('student/leaveapply',leaveApply,name="leaveapply")
+    
+
 ]

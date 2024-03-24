@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate,logout
-from .forms import AdminRegistrationForm, StudentRegistrationForm, TeacherRegistrationForm,StudentAssignForm,CreateCourseForm,CreateSubjectForm,LecturesForm
+from .forms import  LeaveApplyForm, AdminRegistrationForm, StudentRegistrationForm, TeacherRegistrationForm,StudentAssignForm,CreateCourseForm,CreateSubjectForm,LecturesForm
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from .decorator import allowed_users
@@ -16,6 +16,8 @@ from datetime import date
 from django.utils import timezone
 from django.http import JsonResponse
 from django.core.serializers import serialize
+from .logic import *
+import json
 
 student_group, created = Group.objects.get_or_create(name='student')
 admin_group, created = Group.objects.get_or_create(name='admin')
@@ -193,8 +195,9 @@ def assignstudent(request):
 @allowed_users(allowed_roles=['admin'])
 def courseDetail(request,course_name):
     print(unslugify(course_name))
-    
-    data = Lectures.objects.filter(start=today_date)
+    for_course = Course.objects.filter(course_name=course_name.upper()).first()
+
+    data = Lectures.objects.filter(start=today_date,course=for_course)
     print(data)
     # data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
     print(Subject.objects.filter(course_id__course_name='Btech'))
@@ -240,10 +243,13 @@ def courseDashboard(request,course_name):
     print("Show All Students for"+course_name)
     for_course = Course.objects.filter(course_name=course_name.upper()).first()
     allstudent_list = Student.objects.filter(course=for_course)
+    subject_list = Subject.objects.filter(course_id=for_course)
+    print(subject_list)
     return render(request,'course_dashboard.html',{
         'student_list':allstudent_list,
         'student_length':len(allstudent_list),
-        'course_id':course_name
+        'course_id':course_name,
+        'subject_list':json.dumps(list(subject_list.values()))
 
     })
 
@@ -253,10 +259,10 @@ def courseDashboard(request,course_name):
 def presentStudent(request,course_name):
     print("Show All Students for"+course_name)
     for_course = Course.objects.filter(course_name=course_name.upper()).first()
-    presentStudent = RecordAttendance.objects.all()
+    # presentStudent = RecordAttendance.objects.all(course=for_course)
     
-    records_today = RecordAttendance.objects.filter(date=today_date)
-    unique_subjects = RecordAttendance.objects.values_list('subject', flat=True).distinct()
+    records_today = RecordAttendance.objects.filter(date=today_date,course=for_course)
+    unique_subjects = RecordAttendance.objects.filter(course=for_course).values_list('subject', flat=True).distinct()
     return render(request,'presentStudent.html',{
         'present_student':records_today,
         'present_length':len(records_today),
@@ -272,7 +278,9 @@ def calender(request,course_name):
     for_course = Course.objects.filter(course_name=course_name.upper()).first()
     allstudent_list = Student.objects.filter(course=for_course)
     print(unslugify(course_name))
-    data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
+    data = Subject.objects.filter(course_id__course_name=for_course).values('subject_name').distinct()
+    print(data,'-----')
+    # data = Subject.objects.filter(course_id__course_name=course_name.upper()).values('subject_name').distinct()
     return render(request,'calender.html',{
         'subject_list':[item['subject_name'] for item in data],
         'student_list':allstudent_list,
@@ -308,7 +316,9 @@ def markattendance(request,course_name,subject_name,code):
                 date=date.today(),
                 attendance_status=True,
                 course=Course.objects.get(course_name=course_name.upper()),
-                subject=subject_name
+                subject=subject_name,
+                longitude=request.GET.get('lang'),
+                latitude=request.GET.get('lat')
             )
             # print(request.user.profile.roll_no)
             form.save()
@@ -336,6 +346,25 @@ def hello(request):
     # print(Group.objects.all())
     return render(request,'hello.html')
 
+
+
+def map(request):
+    # Example usage
+    latitude = 37.7749  # Example latitude
+    longitude = -122.4194  # Example longitude
+
+    location = get_location(latitude, longitude)
+    print("Location:", location)
+
+    return render(request,'map.html')
+
+
+def leaveApply(request):
+    form = LeaveApplyForm()
+
+    return render(request,'student_dashboard.html',{
+        'form': form
+    })
 
 @login_required(login_url='/demoapp/login/appadmin/')
 @allowed_users(allowed_roles=['admin'])
@@ -374,13 +403,16 @@ def lectures(request,course_name):
         return HttpResponse("Lecture added successfully")
             
     else:    
-        data = Lectures.objects.all()
-        
+        for_course = Course.objects.filter(course_name=course_name.upper()).first()
+        data = Lectures.objects.filter(course=for_course)
+        print(data)
         serialized_data = []
         # serialized_data = [{'title': obj.title, 'start': obj.start, 'end':obj.end} for obj in data]
         for i in data:
-            print(i.title, i.start, i.end)
-            print(type(str(i.title))) 
+            # print(i.title, i.start, i.end,i.course)
+            # print(type(str(i.title))) 
+            # print(i.course , course_name.upper())
+            print("passed")
             temp = {'title':str(i.title), 'start': str(i.start), 'end':str(i.end)}
             serialized_data.append(temp)
             

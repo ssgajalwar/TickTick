@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
-from .models import Student, Course, Subject,Lectures
+from .models import Student, Course, Subject,Lectures,LeaveApply
 
 class AdminLoginForm(AuthenticationForm):
     class Meta:
@@ -52,7 +52,7 @@ class CreateSubjectForm(forms.ModelForm):
 class LecturesForm(forms.ModelForm):
     class Meta:
         model = Lectures
-        fields = ['title', 'start', 'end', 'duration']
+        fields = ['title', 'start', 'end', 'duration','course']
 
     def __init__(self, *args, **kwargs):
         super(LecturesForm, self).__init__(*args, **kwargs)
@@ -60,5 +60,14 @@ class LecturesForm(forms.ModelForm):
 
         subject_choices = Subject.objects.all().values_list('id', 'subject_name')
         self.fields['title'].choices = [(subject[0], subject[1]) for subject in subject_choices]        
+        self.fields['start'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['end'].widget = forms.DateInput(attrs={'type': 'date'})
+
+class LeaveApplyForm(forms.ModelForm):
+    class Meta:
+        model = LeaveApply
+        fields = ['rollno','start','end','course','reason']
+    def __init__(self,*args,**kwargs):
+        super(LecturesForm, self).__init__(*args, **kwargs)
         self.fields['start'].widget = forms.DateInput(attrs={'type': 'date'})
         self.fields['end'].widget = forms.DateInput(attrs={'type': 'date'})

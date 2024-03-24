@@ -1,128 +1,21 @@
-<!-- yourappname/templates/admin_dashboard.html -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,700;0,800;0,900;1,600;1,700;1,800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="bg-theme vh100">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center py-3">
-                <h4>Hello {{ username }}, your role is student</h4>
-                <a class="btn py-1" href="{% url 'demoapp:user_logout' %}">Logout</a>
+{% extends 'base.html'%}
+{% block content %}
+<!-- <link rel="stylesheet" href="./style.css"> -->
+<div class=" bg-theme text-white" style="min-height: 100vh;">
+    {% include 'student_navbar.html'%}
+    <div class="container h-100 d-flex  ">
+        {% include 'student_sidebar.html'%}
+        <div class="container mx-3 w-100">
+            <div class="allstudent_wrapper mt-3">
+                <form action="">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                </form>
             </div>
-            <div class="mt-4">
-                <h3>Operation for Student</h3>
-                <ul class="d-flex flex-wrap">
-                    <!-- <li><a class="text-nowrap" href="{% url 'demoapp:student_registration'%}">ASk for Leave</a> </li>  -->
-                    <!-- <li><a class="text-nowrap" href="{% url 'demoapp:teacher_registration'%}">Ask for Attendance</a> </li> -->
-                </ul>
-            </div>
-
-        
         </div>
+        
     </div>
+</div>
+{% endblock %}
 
 
-
-    <!-- <h3>All Subjects</h3> -->
-    <!-- <ul>
-        {% for i in subjects %}
-        <li> {{i}} </li>
-        {% endfor %}
-    </ul> -->
-
-        <!-- <h3>All Student</h3>
-    <ul>
-        {% for i in students %}
-        <li> {{i}} </li>
-        {% endfor %}
-    </ul> -->
-
-
-    <style>
-    *{
-        margin: 0px;
-        font-family: 'Poppins', sans-serif;
-
-        padding: 0px;
-    }    
-    .homepage{
-        height: 100vh;
-   
-    }
-    .bg-theme{
-    color : #fff;
-    background: #8E2DE2;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
-    .btn{
-        border-radius: 25px;
-        font-size: 18px;
-        padding: 10px 30px;
-        background: #fff;
-        color: #4A00E0;
-        text-decoration: none;
-    }
-    .vh100{
-        min-height: 100vh;
-        height: auto;
-    }
-
-    ul{
-        display: flex;
-        /* gap: 50%; */
-        align-items: center;
-        /* justify-content: space-around; */
-        flex-wrap: wrap;
-    }
-    ul li{
-        list-style: none;
-        border-radius: 40px;
-        background: #edcef3;
-        box-shadow:  7px 7px 14px #d8bbdd,
-             -7px -7px 14px #ffe1ff;
-        margin: 15px ;     
-        height: 55px;
-        width: 20%;
-        display: flex;
-
-    }
-    ul li a{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #4A00E0;
-        text-decoration: none;     
-        height: 100%;
-        width: 100%;
-    }
-    </style>
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-</head>
-<body>
-    <h1></h1>
-    <a href="{% url 'demoapp:user_logout' %}">Logout</a>
-</body>
-</html>

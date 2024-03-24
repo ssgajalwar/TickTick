@@ -45,6 +45,8 @@ class RecordAttendance(models.Model):
     attendance_status = models.BooleanField()
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     subject = models.CharField(max_length=255)
+    longitude = models.CharField(max_length=255,blank=True,)
+    latitude = models.CharField(max_length=255,blank=True)
     def __str__(self):
         return f"{self.username} - {self.date}"
     
@@ -53,6 +55,7 @@ class Lectures(models.Model):
     start = models.DateField()
     end = models.DateField()
     duration = models.FloatField()
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.title}"
     
@@ -62,3 +65,13 @@ class QrCodeLog(models.Model):
     subject = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.course}-{self.subject}"
+    
+class LeaveApply(models.Model):
+    rollno = models.CharField(max_length=255)
+    start = models.DateField()
+    end = models.DateField()    
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    reason = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.rollno}"

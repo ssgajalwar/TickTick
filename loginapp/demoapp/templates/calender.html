@@ -11,7 +11,7 @@
       let getEvent = () => {
           return new Promise((resolve, reject) => {
               $.ajax({
-                  url: 'http://localhost:8000/demoapp/appadmin/coursedetail/lectures/mca',
+                  url: 'http://localhost:8000/demoapp/appadmin/coursedetail/lectures/{{course_id}}',
                   type: 'GET',
                   dataType: 'json',
                   success: function(data) {
@@ -29,8 +29,8 @@
       document.addEventListener('DOMContentLoaded', async function() {
           try {
               const eventData = await getEvent();
-
-              var calendarEl = document.getElementById('calendar');
+              console.log(eventData)  
+              var calendarEl = document.getElementById('calendar-{{course_id}}');
               var calendar = new FullCalendar.Calendar(calendarEl, {
                   navLinks: true,
                   initialView: 'dayGridMonth',
@@ -60,7 +60,7 @@
             {% include 'sidebar.html'%}
 
             <div class="w-100 bg-white mx-3 p-5" style="border-radius: 20px;">
-                <div id='calendar'></div>
+                <div id='calendar-{{course_id}}'></div>
             </div>
         </div>
     </div>    
