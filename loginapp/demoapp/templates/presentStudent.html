@@ -9,7 +9,7 @@
         <div class="container mx-3 w-100">
             <!-- <h3 class="text-left text-light mt-5 mb-4"> {{present_length|default:'0'}} Records found </h3> -->
             <div class="d-flex flex-wrap row">
-                {% if sub %}
+                {% if present_length > 0 %}
                     {% for sub in subject_list %}
                     <div class="col-md-6 col-sm-12">
                         <h2 class="text-white text-capitalize my-2">{{sub}}</h2>

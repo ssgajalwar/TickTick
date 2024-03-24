@@ -18,6 +18,8 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from .logic import *
 import json
+import geocoder
+from geopy.geocoders import Nominatim
 
 student_group, created = Group.objects.get_or_create(name='student')
 admin_group, created = Group.objects.get_or_create(name='admin')
@@ -154,7 +156,7 @@ def addcourse(request):
         form = CreateCourseForm(request.POST)
         if form.is_valid():
             form.save()
-    
+            return render(request,'success_msg.html')
     form = CreateCourseForm()
 
     return render(request,'forms/addcourse.html',{
@@ -169,7 +171,7 @@ def addsubject(request):
         form = CreateSubjectForm(request.POST)
         if form.is_valid():
             form.save()
-    
+            return render(request,'success_msg.html')
     form = CreateSubjectForm()
     return render(request,'forms/addsubject.html',{
         'form':form
@@ -262,7 +264,9 @@ def presentStudent(request,course_name):
     # presentStudent = RecordAttendance.objects.all(course=for_course)
     
     records_today = RecordAttendance.objects.filter(date=today_date,course=for_course)
-    unique_subjects = RecordAttendance.objects.filter(course=for_course).values_list('subject', flat=True).distinct()
+    unique_subjects = RecordAttendance.objects.filter(date=today_date,course=for_course).values_list('subject', flat=True).distinct()
+    print(records_today)
+    print(unique_subjects)
     return render(request,'presentStudent.html',{
         'present_student':records_today,
         'present_length':len(records_today),
@@ -293,6 +297,14 @@ def calender(request,course_name):
 def markattendance(request,course_name,subject_name,code):
     # print(request.user)
     # print(course_name,subject_name,code,request.user.username)
+    location = geocoder.ip('me')
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    qrlocation = geolocator.reverse((request.GET.get('lat'), request.GET.get('lang')))
+    user_city = location.city
+    qr_location_city = qrlocation.raw.get('address', {}).get('city')
+
+    # print(user_city)
+    # print(qr_location_city)
     student = Student.objects.get(user=request.user.id)
     roll_no = student.roll_no
     code_exist = QrCodeLog.objects.filter(subject=subject_name).exists()

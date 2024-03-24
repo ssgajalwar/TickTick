@@ -11,7 +11,7 @@
       let getEvent = () => {
           return new Promise((resolve, reject) => {
               $.ajax({
-                  url: 'http://localhost:8000/demoapp/appadmin/coursedetail/lectures/{{course_id}}',
+                  url: 'https://d83e-103-121-73-131.ngrok-free.app/demoapp/appadmin/coursedetail/lectures/{{course_id}}',
                   type: 'GET',
                   dataType: 'json',
                   success: function(data) {
