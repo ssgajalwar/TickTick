@@ -33,7 +33,11 @@ class Student(models.Model):
     # user = models.CharField(max_length=255)
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=20)
-    
+    longitude = models.CharField(max_length=255,blank=True,)
+    latitude = models.CharField(max_length=255,blank=True)
+    city = models.CharField(max_length=255,blank=True)
+    ip_addr = models.CharField(max_length=255,blank=True)
+    inrange = models.CharField(max_length=255,blank=True)
     def __str__(self):
         return self.user.username
 
@@ -63,6 +67,9 @@ class QrCodeLog(models.Model):
     code = models.CharField(max_length=255)
     course =  models.CharField(max_length=255)   
     subject = models.CharField(max_length=255)
+    longitude = models.CharField(max_length=255,blank=True,)
+    latitude = models.CharField(max_length=255,blank=True)
+    city = models.CharField(max_length=255,blank=True)
     def __str__(self):
         return f"{self.course}-{self.subject}"
     
@@ -75,3 +82,12 @@ class LeaveApply(models.Model):
 
     def __str__(self):
         return f"{self.rollno}"
+    
+class Institutes(models.Model):
+    name = models.CharField(max_length=255,blank=True,)
+    longitude = models.CharField(max_length=255,blank=True,)
+    latitude = models.CharField(max_length=255,blank=True)
+    city = models.CharField(max_length=255,blank=True)  
+
+    def __str__(self):
+        return f"{self.name}"

@@ -10,7 +10,7 @@ from .forms import  LeaveApplyForm, AdminRegistrationForm, StudentRegistrationFo
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from .decorator import allowed_users
-from .models import Course,Subject,Student,RecordAttendance,Lectures,QrCodeLog
+from .models import Course,Subject,Student,RecordAttendance,Lectures,QrCodeLog,Institutes
 from .utils import unslugify
 from datetime import date
 from django.utils import timezone
@@ -18,7 +18,7 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from .logic import *
 import json
-import geocoder
+# import geocoder
 from geopy.geocoders import Nominatim
 
 student_group, created = Group.objects.get_or_create(name='student')
@@ -139,7 +139,15 @@ def admin_dashboard(request):
 @allowed_users(allowed_roles=['student'])
 def student_dashboard(request):
     messages.info(request, f"Hello {request.user.username}, your role is student")
-    return render(request, 'student_dashboard.html', {'username': request.user.username})
+    institute = Institutes.objects.get(name="MET")
+    print(institute.longitude)
+    print(institute.latitude)
+    # subject_obj = QrCodeLog.objects.get(subject=subject_name)
+    return render(request, 'student_dashboard.html', {
+        'username': request.user.username,
+        'lat':institute.latitude,
+        'long':institute.longitude
+    })
 
 @require_http_methods(["GET", "POST"])
 @login_required(login_url='/demoapp/login/teacher/')  # Specify your teacher login URL
@@ -297,15 +305,18 @@ def calender(request,course_name):
 def markattendance(request,course_name,subject_name,code):
     # print(request.user)
     # print(course_name,subject_name,code,request.user.username)
-    location = geocoder.ip('me')
-    geolocator = Nominatim(user_agent="geoapiExercises")
-    qrlocation = geolocator.reverse((request.GET.get('lat'), request.GET.get('lang')))
-    user_city = location.city
-    qr_location_city = qrlocation.raw.get('address', {}).get('city')
-
-    # print(user_city)
+    # location = geocoder.ip('me')
+    # geolocator = Nominatim(user_agent="geoapiExercises")
+    # qrlocation = geolocator.reverse((request.GET.get('lat'), request.GET.get('lang')))
+    # user_city = location.city
+    # qr_location_city = qrlocation.raw.get('address', {}).get('city')
+    
+    print(request.user)
     # print(qr_location_city)
     student = Student.objects.get(user=request.user.id)
+    print(student.inrange)
+    if student.inrange == 'False':
+        return HttpResponse("Not in a range to mark attendance ")
     roll_no = student.roll_no
     code_exist = QrCodeLog.objects.filter(subject=subject_name).exists()
     print(code_exist)
@@ -359,6 +370,49 @@ def hello(request):
     return render(request,'hello.html')
 
 
+def studentLocation(request):
+    
+    current_user = request.user.id
+    
+    # Retrieve the student object associated with the logged-in user
+    try:
+        student = Student.objects.get(user=current_user)
+    except Student.DoesNotExist:
+        # Handle the case where the student object does not exist
+        return HttpResponse("Student information not found.")
+
+    # Retrieve longitude, latitude, and city from the request
+    longitude = request.GET.get('long')
+    latitude = request.GET.get('lat')
+    city = request.GET.get('city')
+    ip = request.GET.get('ip')
+    
+    # Update the student's location information
+    student.longitude = longitude
+    student.latitude = latitude
+    student.city = city
+    student.ip_addr = ip
+    student.save()
+    return HttpResponse(request.user.username,)
+
+def studentOutLocation(request):
+    current_user = request.user.id
+    
+    # Retrieve the student object associated with the logged-in user
+    try:
+        student = Student.objects.get(user=current_user)
+    except Student.DoesNotExist:
+        # Handle the case where the student object does not exist
+        return HttpResponse("Student information not found.")
+
+    # Retrieve longitude, latitude, and city from the request
+    inrange = request.GET.get('inrange')
+
+    student.inrange = inrange
+    student.save()
+
+
+    return render(request,'outoflocation.html')
 
 def map(request):
     # Example usage
@@ -452,6 +506,10 @@ def qrcodeLog(request,course_name,subject_name,code):
     if subject_exists:
         subject_obj = QrCodeLog.objects.get(subject=subject_name)
         subject_obj.code = code
+        subject_obj.longitude = request.GET.get('long')
+        subject_obj.latitude = request.GET.get('lat')
+        subject_obj.city = request.GET.get('city')
+
         subject_obj.save()
         print('update')
     else:

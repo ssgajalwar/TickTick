@@ -6,14 +6,17 @@
   <div class="container h-100 d-flex justify-content-center align-items-center">
       <div>
         <h2 class="text-white text-center">Login as Student</h2>
-        <form method="post" action="{% url 'demoapp:student_login' %}">
+        <form method="post" id="studentLoginForm"  action="{% url 'demoapp:student_login' %}">
           {% csrf_token %}
           {{ form.as_p }}
-          <button type="submit">Login</button>
+          <!-- <span id="location-msg" class="text-danger">Please Allow location !!!</span> -->
+          <button type="submit" class="" id="button">Login</button>
           <p>Dont have a account <a href="{% url 'demoapp:student_registration'%}">Register as Student</a></p>
         </form>
       </div>
   </div>
 </div>
-
+<script>
+ 
+</script>
 {% endblock %}

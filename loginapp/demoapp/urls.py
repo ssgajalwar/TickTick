@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView
-from .views import leaveApply,addLectures,lectures,presentStudent,calender,allstudent,markattendance,generateqr,courseDetail,assignstudent,addsubject,addcourse,CustomLoginView,admin_dashboard, student_dashboard, teacher_dashboard,hello,admin_registration,student_registration,teacher_registration,user_logout
+from .views import studentOutLocation,studentLocation,leaveApply,addLectures,lectures,presentStudent,calender,allstudent,markattendance,generateqr,courseDetail,assignstudent,addsubject,addcourse,CustomLoginView,admin_dashboard, student_dashboard, teacher_dashboard,hello,admin_registration,student_registration,teacher_registration,user_logout
 from . import views
 app_name = 'demoapp'
 
@@ -38,7 +38,9 @@ urlpatterns = [
 
     # Student URL's
     path('student/markattendance/<slug:course_name>/<slug:subject_name>/<slug:code>',markattendance,name="markattendance"),
-    path('student/leaveapply',leaveApply,name="leaveapply")
+    path('student/leaveapply',leaveApply,name="leaveapply"),
+    path('student/location',studentLocation,name="studentlocation"),
+    path('student/outoflocation',studentOutLocation,name="studentOutlocation"),
     
 
 ]

@@ -47,14 +47,23 @@
         padding: 10px 30px;
     }
 </style>
-<script>
+<script type="application/javascript">
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         var userLocation;
         var latitude;
         var longitude;
-        function getLocation() {
+        function getIP(json){
+            console.log(json.ip)
+            cords = json.loc.split(',')
+            getLocation(json.ip,cords[0],cords[1])
+            console.log(cords)
+ 
+        }
+
+        
+        function getLocation(ip,c1,c2) {
             console.log(navigator.geolocation)
             if (navigator.geolocation) {
                 console.log("userLocation")
@@ -70,13 +79,45 @@
                     )
                     console.log("Latitude: " + latitude + ", Longitude: " + longitude);
                 });
+                navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                // Fetch city name using reverse geocoding
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${c1}&lon=${c2}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.address && data.address.city) {
+                            var city = data.address.city;
+                            console.log("City:", city);
+
+                            // Generate URL with city name
+                            var newUrl = generateString(12, c1, c2, city);
+
+                            // Generate QR code
+                            var qrcode = new QRCode("qrcode", newUrl);
+
+                            // Append link with URL including city name
+                            $("#linkDemo").append(`
+                                <a href="${newUrl}">Link</a>
+                            `);
+                        } else {
+                            console.error("City name not found in the response:", data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching city name:", error);
+                    });
+
+                console.log("Latitude:", c1, ", Longitude:", c2);
+            });
             } 
         }
      
         getLocation()
 
 
-      function generateString(length,lat,lang) {
+      function generateString(length,lat,lang,city) {
         window.location.href
         
         let result = "";
@@ -92,14 +133,14 @@
         var csrftoken = getCookie('csrftoken');
         
         $.ajax({
-            url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&lang=${lang}`,
+            url: `/demoapp/appadmin/qrcodelog/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&long=${lang}&city=${city}`,
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: csrftoken
                 // Other data you want to include in the request
             },
             success: function(data, status) {
-                alert("Data: " + data + "\nStatus: " + status);
+                console.log(data,"------------")
             },
             error: function(xhr, status, error) {
                 // Handle errors
@@ -126,7 +167,7 @@
         // alert('QR code Expired!!!')
         // },30000)
         // https://fea7-103-121-73-131.ngrok-free.app/demoapp/hello/
-        let newUrl = `https://d83e-103-121-73-131.ngrok-free.app/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&lang=${lang}`;
+        let newUrl = `http://localhost:8000/demoapp/student/markattendance/{{ course_name }}/{{ subject_name }}/${result}?lat=${lat}&lang=${lang}&city=${city}`;
         return newUrl;
       }
 
@@ -147,8 +188,8 @@
         }
         return cookieValue;
     }
-    </script>
 
 </script>
+<!-- <script type="application/javascript" src="https://ipinfo.io/?format=jsonp&callback=getIP"></script> -->
 {% endblock %}
 

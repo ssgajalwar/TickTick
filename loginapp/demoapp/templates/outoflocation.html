@@ -1,13 +1,14 @@
 {% extends 'base.html'%}
-{% load static%}
 {% block content %}
 <!-- <link rel="stylesheet" href="./style.css"> -->
 <div class="homepage bg-theme">
     <div class="container h-100 d-flex justify-content-center align-items-center flex-column">
-        <h1 class="text-center text-light d-flex align-items-center">Welcome To TickTick</h1>
+        <h1 class="text-center text-light">Please Go Inside the Location to Use Full features</h1>
         <div class="mt-2">
-            <a class="btn m-2" href="{% url 'demoapp:admin_dashboard'%}">Admin</a>
-            <a class="btn m-2" href="{% url 'demoapp:student_dashboard'%}">Student</a>
+            <a class="btn py-1 text-white bg-theme" style="background: linear-gradient(to right, #4A00E0, #8E2DE2);" href="{% url 'demoapp:user_logout' %}">Logout</a>
+
+            <!-- <a class="btn m-2" href="{% url 'demoapp:admin_dashboard'%}">Admin</a> -->
+            <!-- <a class="btn m-2" href="{% url 'demoapp:student_dashboard'%}">Student</a> -->
             <!-- <a class="btn m-2" href="{% url 'demoapp:teacher_dashboard'%}">Teacher</a> -->
         </div>
     </div>

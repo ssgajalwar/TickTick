@@ -16,6 +16,217 @@
         
     </div>
 </div>
+
+<script type="application/javascript">
+        var userLocation;
+        var latitude;
+        var longitude;
+        var ip_addr;
+        function getIP(json){
+            console.log(json.ip)
+            cords = json.loc.split(',')
+            getLocation(json.ip,cords[0],cords[0])
+            console.log(cords)
+            const currentLocation = { curr_latitude: cords[0], curr_longitude: cords[1] }; // Replace with actual location data
+        
+            if (metBandraFence.inside(currentLocation.curr_latitude, currentLocation.curr_longitude)) {
+                console.log('Inside MET Bandra geofence!');
+                var csrftoken = getCookie('csrftoken');
+                $.ajax({
+                        url: '/demoapp/student/outoflocation?inrange=True',
+                        type: 'GET',
+                        data: {
+                                    csrfmiddlewaretoken: csrftoken
+                                    // Other data you want to include in the request
+                                },
+                                success: function(data, status) {
+                                    console.log(data,"------------")
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle errors
+                                    console.error(xhr.responseText);
+                                }
+                        });                
+            } else {
+                alert(cords[0])
+                alert(cords[1])
+                console.log('Outside MET Bandra geofence!');
+                window.location.href = '/demoapp/student/outoflocation?inrange=False'
+                // window.location.reload(1)
+            }
+        }
+
+
+//         $("#studentLoginForm").submit(function(event) {
+//     // Prevent default form submission
+//     event.preventDefault();
+
+//     // Get user's location
+//     getLocation(function(latitude, longitude) {
+//         if (latitude && longitude) {
+//             // If location is available, submit the form
+//             event.currentTarget.submit();
+//         } else {
+//             // If location is not available, show error message or handle accordingly
+//             alert("Unable to get user's location. Please try again later.");
+//         }
+//     });
+// });
+        // function getIP(json) {
+        //     console.log("first")
+        //     alert(json.ip)
+        //     getLocation(json.ip)
+        // }
+        
+        class CircularGeofenceRegion {
+            constructor(opts) {
+                Object.assign(this, opts);
+            }
+            
+            inside(lat2, lon2) {
+                const lat1 = this.latitude;
+                const lon1 = this.longitude;
+                const R = 6371e3; // Earth's radius in meters
+                
+                const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+                const φ2 = lat2 * Math.PI/180;
+                const Δφ = (lat2-lat1) * Math.PI/180;
+                const Δλ = (lon2-lon1) * Math.PI/180;
+                
+                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                
+                const distance = R * c; // in meters
+                return distance < this.radius;
+            }
+        }
+        
+        // MET Bandra college location coordinates
+        // const metBandraLatitude = 19.0466; // Approximate latitude
+        // const metBandraLongitude = 72.8407; // Approximate longitude
+
+        console.log("{{lat}}","{{long}}","hello")
+        const metBandraLatitude = "{{lat}}"; // Approximate latitude
+        const metBandraLongitude = "{{long}}"; // Approximate longitude        
+        
+        // Define a circular geofence around MET Bandra college with a specified radius
+        const metBandraFence = new CircularGeofenceRegion({
+            name: 'METBandraFence',
+            latitude:  metBandraLatitude,
+            longitude: metBandraLongitude,
+            radius: 18000 // radius in meters
+        });
+        
+        // Example usage:
+        // const currentLocation = { latitude: 19.047, longitude: 72.841 }; // Replace with actual location data
+        // const currentLocation = { latitude: 19.1913, longitude: 72.9694 }; // Replace with actual location data
+        
+        // if (metBandraFence.inside(currentLocation.latitude, currentLocation.longitude)) {
+        //     console.log('Inside MET Bandra geofence!');
+        // } else {
+        //     console.log('Outside MET Bandra geofence!');
+        //     window.location.href = '/demoapp/student/outoflocation?inrange=False'
+        //     // window.location.reload(1)
+        // }
+        
+        function getLocation(ip,c1,c2) {
+            console.log(navigator.geolocation)
+            console.log(ip)
+            if (navigator.geolocation) {
+                console.log("userLocation")
+                // navigator.geolocation.getCurrentPosition(function(position){
+                //     latitude = position.coords.latitude;
+                //     longitude = position.coords.longitude;  
+                //     let newUrl = generateString(12,latitude,longitude)  
+                //     var qrcode = new QRCode("qrcode", newUrl);
+                //     $("#linkDemo").append(
+                //     `
+                //         <a href="${newUrl}">Link</a>
+                //     `
+                //     )
+                //     console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+                // });
+                navigator.geolocation.getCurrentPosition(function(position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+
+                // Fetch city name using reverse geocoding
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${c1}&lon=${c2}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.address && data.address.city) {
+                            var city = data.address.city;
+                            console.log("City:", city);
+                            // alert(city)
+                            // $("#button").removeClass('d-none')
+                            // $("#location-msg").addClass('d-none')
+                            var csrftoken = getCookie('csrftoken');
+                            // $.ajax({
+                            //     url:'https://ipinfo.io/?format=jsonp&callback=getIP',
+                            //     type:'GET',
+                            //     data: {
+                            //         csrfmiddlewaretoken: csrftoken
+                            //         // Other data you want to include in the request
+                            //     },
+                            //     success: function(data, status) {
+                            //         console.log( JSON.parse(data),"------------")
+                            //     },
+                            //     error: function(xhr, status, error) {
+                            //         // Handle errors
+                            //         console.error(xhr.responseText);
+                            //     }
+                            // })
+                            $.ajax({
+                                url: `/demoapp/student/location?lat=${c1}&long=${c2}&city=${city}&ip=${ip}`,
+                                type: 'POST',
+                                data: {
+                                    csrfmiddlewaretoken: csrftoken
+                                    // Other data you want to include in the request
+                                },
+                                success: function(data, status) {
+                                    console.log(data,"------------")
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle errors
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        } else {
+                            console.error("City name not found in the response:", data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching city name:", error);
+                    });
+
+                console.log("Latitude:", latitude, ", Longitude:", longitude);
+            });
+            } 
+
+            // return True;
+        }
+
+        function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Check if this cookie string begins with the name we want
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+     
+</script>
+<script type="application/javascript" src="https://ipinfo.io/?format=jsonp&callback=getIP"></script>
+
 {% endblock %}
 
 
